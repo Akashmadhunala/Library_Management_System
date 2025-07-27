@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.OverdueBooksController">
+    <center>
+        <TableView fx:id="overdueTable">
+            <columns>
+                <TableColumn text="Book ID" fx:id="colBookId"/>
+                <TableColumn text="Title" fx:id="colTitle"/>
+                <TableColumn text="Member Name" fx:id="colMember"/>
+                <TableColumn text="Due Date" fx:id="colReturnDate"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

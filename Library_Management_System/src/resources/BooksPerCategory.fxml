@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.BooksPerCategoryController">
+    <center>
+        <TableView fx:id="categoryTable">
+            <columns>
+                <TableColumn text="Category" fx:id="colCategory"/>
+                <TableColumn text="Count" fx:id="colCount"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

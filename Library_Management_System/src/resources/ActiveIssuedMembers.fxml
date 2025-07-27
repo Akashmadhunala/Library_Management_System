@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ActiveIssuedMembersController">
    <children>
       <Label layoutX="160.0" layoutY="33.0" text="Members with Active Issued Books">
@@ -15,13 +14,14 @@
             <Font name="System Bold Italic" size="20.0" />
          </font>
       </Label>
-      <TableView fx:id="membersTable" layoutX="140.0" layoutY="91.0" prefHeight="200.0" prefWidth="320.0">
+      <TableView fx:id="membersTable" layoutX="79.0" layoutY="91.0" prefHeight="200.0" prefWidth="440.0">
         <columns>
-          <TableColumn fx:id="colMemberId" prefWidth="107.9999771118164" text="Member_Id" />
-          <TableColumn fx:id="colName" prefWidth="115.99992370605469" text="Name" />
-            <TableColumn fx:id="colEmail" prefWidth="75.0" text="Email" />
+          <TableColumn fx:id="colMemberId" prefWidth="86.66665649414062" text="Member_Id" />
+          <TableColumn fx:id="colName" prefWidth="187.33331298828125" text="Name" />
+            <TableColumn fx:id="colEmail" prefWidth="164.0" text="Email" />
         </columns>
       </TableView>
-      <Button layoutX="278.0" layoutY="319.0" mnemonicParsing="false" onAction="#handleBack" text="Go Back" />
+      <Button layoutX="172.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleBack" text="Go Back" />
+      <Button layoutX="321.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleGoHome" text="Go Home" />
    </children>
 </AnchorPane>

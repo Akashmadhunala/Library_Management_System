@@ -22,7 +22,7 @@ public class IssueRecordDao {
 	}
 	public String issueBook(int bookId, int memberId) throws SQLException {
         String checkBookQuery = "SELECT Status, Availability FROM books WHERE BookId = ?";
-        String insertIssueQuery = "INSERT INTO issue_record (BookId, MemberId, Status, IssueDate) VALUES (?, ?, 'I', ?)";
+        String insertIssueQuery = "INSERT INTO issue_records (BookId, MemberId, Status, IssueDate) VALUES (?, ?, 'I', ?)";
         String updateBookQuery = "UPDATE books SET Availability = 'I' WHERE BookId = ?";
         try (
             PreparedStatement checkStmt = conn.prepareStatement(checkBookQuery);
@@ -58,8 +58,8 @@ public class IssueRecordDao {
     }
         public String returnBook(int bookId, int memberId) throws SQLException {
         String checkBookQuery = "SELECT Availability FROM books WHERE BookId = ?";
-        String findIssueQuery = "SELECT IssueId FROM issue_record WHERE BookId = ? AND MemberId = ? AND Status = 'I' ORDER BY IssueDate DESC LIMIT 1";
-        String updateIssueQuery = "UPDATE issue_record SET Status = 'R', ReturnDate = ? WHERE IssueId = ?";
+        String findIssueQuery = "SELECT IssueId FROM issue_records WHERE BookId = ? AND MemberId = ? AND Status = 'I' ORDER BY IssueDate DESC LIMIT 1";
+        String updateIssueQuery = "UPDATE issue_records SET Status = 'R', ReturnDate = ? WHERE IssueId = ?";
         String updateBookQuery = "UPDATE books SET Availability = 'A' WHERE BookId = ?";
         try (
             PreparedStatement checkStmt = conn.prepareStatement(checkBookQuery);
@@ -124,7 +124,7 @@ public class IssueRecordDao {
         }
         public List<IssueRecord> getAllIssueRecords() {
             List<IssueRecord> issueRecords = new ArrayList<>();
-            String query = "SELECT IssueId, BookId, MemberId, Status, IssueDate, ReturnDate FROM issue_record";
+            String query = "SELECT IssueId, BookId, MemberId, Status, IssueDate, ReturnDate FROM issue_records";
             try (PreparedStatement stmt = conn.prepareStatement(query);
                  ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

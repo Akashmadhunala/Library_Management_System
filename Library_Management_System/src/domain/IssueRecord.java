@@ -10,9 +10,10 @@ public class IssueRecord {
     private LocalDate issueDate;
     private LocalDate returnDate;
     
-    
+    //
     private String bookTitle;
     private String memberName;
+
 	public String getBookTitle() {
 		return bookTitle;
 	}

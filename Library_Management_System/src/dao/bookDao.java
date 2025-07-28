@@ -37,7 +37,7 @@ public class bookDao {
 	
 
 	 public void updateBookDetails(int id, String title, String author, String category, BookStatus status) throws DatabaseException {
-		    String logSql = "INSERT INTO books_log SELECT * FROM books WHERE BookId=?";
+		    String logSql = "INSERT INTO books_log  SELECT * FROM books  WHERE BookId=?";// change this
 		    
 		    Connection conn = null;
 		    try {
@@ -47,6 +47,7 @@ public class bookDao {
 		            logPs.setInt(1, id);
 		            logPs.executeUpdate();
 		        }
+		        
 		        StringBuilder updateSql = new StringBuilder("UPDATE books SET ");
 		        List<Object> params = new ArrayList<>();
 
@@ -115,7 +116,7 @@ public class bookDao {
 		        try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
 		            logPs.setInt(1, id);
 		            logPs.executeUpdate();
-		        }
+		        } 
 		        try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
 		            updatePs.setString(1, avail.name());
 		            updatePs.setInt(2, id);

@@ -15,13 +15,16 @@ public class BookService {
 		this.bd = bd;
 	}
 	public void addBook(Book book) throws DatabaseException {
+		//validations
 		bd.addBook(book);
 	}
 	public void updateBookDetails(int id, String title, String author, String category, BookStatus status) throws DatabaseException  {	
+		//validations
 		bd.updateBookDetails(id,title,author,category,status);
 		
 	}
 	public void updateBookAvailability(int id, AvailabilityStatus status) throws DatabaseException {
+		//2 are mandatory
 		bd.updateBookAvailability(id,status);
 		
 	}
@@ -31,5 +34,6 @@ public class BookService {
 	public boolean bookExists(int id) throws DatabaseException {
 	    return bd.bookExists(id);
 	}
+
 
 }

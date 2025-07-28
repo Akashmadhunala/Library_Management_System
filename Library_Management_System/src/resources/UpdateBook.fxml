@@ -6,45 +6,28 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UpdateBookController">
+<AnchorPane xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.UpdateBookController"
+            prefHeight="400.0" prefWidth="600.0">
    <children>
       <Label layoutX="180.0" layoutY="35.0" text="Update Book Details">
-         <font>
-            <Font size="23.0" />
-         </font>
+         <font><Font size="23.0" /></font>
       </Label>
-      <Label layoutX="99.0" layoutY="100.0" text="Enter the book_id to modify">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="227.0" layoutY="139.0" text="New Title">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="210.0" layoutY="181.0" text="New Author">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="203.0" layoutY="226.0" text="New Category">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label layoutX="200.0" layoutY="262.0" text="New Status">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <TextField fx:id="idField" layoutX="319.0" layoutY="98.0" />
-      <TextField fx:id="titleField" layoutX="319.0" layoutY="137.0" />
-      <TextField fx:id="authorField" layoutX="319.0" layoutY="179.0" />
-      <TextField fx:id="categoryField" layoutX="319.0" layoutY="224.0" />
-      <TextField fx:id="statusField" layoutX="319.0" layoutY="260.0" />
-      <Button layoutX="184.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleUpdateBook" text="Submit" />
-      <Button layoutX="300.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleBack" text="Back" />
+
+      <Label layoutX="180.0" layoutY="100.0" text="Title"/>
+      <TextField fx:id="titleField" layoutX="300.0" layoutY="95.0"/>
+
+      <Label layoutX="180.0" layoutY="140.0" text="Author"/>
+      <TextField fx:id="authorField" layoutX="300.0" layoutY="135.0"/>
+
+      <Label layoutX="180.0" layoutY="180.0" text="Category"/>
+      <TextField fx:id="categoryField" layoutX="300.0" layoutY="175.0"/>
+
+      <Label layoutX="180.0" layoutY="220.0" text="Status"/>
+      <TextField fx:id="statusField" layoutX="300.0" layoutY="215.0"/>
+
+      <Button layoutX="200.0" layoutY="280.0" text="Submit" onAction="#handleUpdateBook"/>
+      <Button layoutX="320.0" layoutY="280.0" text="Back" onAction="#handleBack"/>
    </children>
 </AnchorPane>

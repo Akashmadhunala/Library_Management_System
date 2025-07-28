@@ -38,44 +38,92 @@ public class UpdateMemberController {
     @FXML private Button updateButton;
     @FXML
     private void handleUpdate() {
-    	int memberId = Integer.parseInt(memberIdField.getText().trim());
-		String name=nameField.getText().trim();
-        String email = emailField.getText().trim();
-        String mobile = mobileField.getText().trim();
-        Gender gender;
-        if (maleRadio.isSelected()) {
-            gender = Gender.M;
-        } else if (femaleRadio.isSelected()) {
-            gender = Gender.F;
-        } else {
-            gender = Gender.OTHER;
-        }
-        String address = addressArea.getText().trim();
-        if (email.isEmpty() || mobile.isEmpty() || address.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please fill in all fields.");
+        int memberId;
+        try {
+            memberId = Integer.parseInt(memberIdField.getText().trim());
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Member ID must be a number.");
             return;
         }
+
+        String name = nameField.getText().trim();
+        String email = emailField.getText().trim();
+        String mobile = mobileField.getText().trim();
+        String address = addressArea.getText().trim();
+
+        if (name.isEmpty() && email.isEmpty() && mobile.isEmpty() && address.isEmpty() && genderGroup.getSelectedToggle() == null) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please provide at least one field to update.");
+            return;
+        }
+
         try {
-            Member member = new Member(name, email, mobile, gender, address);
+            Member member = new Member();
+            if (!name.isEmpty()) member.setName(name);
+            if (!email.isEmpty()) member.setEmail(email);
+            if (!mobile.isEmpty()) member.setMobile(mobile);
+            if (!address.isEmpty()) member.setAddress(address);
+            if (genderGroup.getSelectedToggle() != null) {
+                if (maleRadio.isSelected()) member.setGender(Gender.M);
+                else if (femaleRadio.isSelected()) member.setGender(Gender.F);
+                else member.setGender(Gender.OTHER);
+            }
+
             MemberManagementService service = new MemberManagementService();
-             boolean success=service.updateMember(memberId, member);
-             if(success)
-             {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Member updated successfully!");
-            clearForm();
-            closeWindow();
-             }
-             else
-             {
-            	 showAlert(Alert.AlertType.ERROR, "Update Failed", "Member update failed. Please try again.");
-             }
+            boolean success = service.updateMember(memberId, member);
+            if (success) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Member updated successfully!");
+                clearForm();
+                closeWindow();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Update Failed", "Id not found.");
+            }
         } catch (IllegalArgumentException ex) {
             showAlert(Alert.AlertType.ERROR, "Invalid Input", ex.getMessage());
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Error", "Unexpected error: " + ex.getMessage());
             ex.printStackTrace();
         }
-        }
+    }
+//    @FXML
+//    private void handleUpdate() {
+//    	int memberId = Integer.parseInt(memberIdField.getText().trim());
+//		String name=nameField.getText().trim();
+//        String email = emailField.getText().trim();
+//        String mobile = mobileField.getText().trim();
+//        Gender gender;
+//        if (maleRadio.isSelected()) {
+//            gender = Gender.M;
+//        } else if (femaleRadio.isSelected()) {
+//            gender = Gender.F;
+//        } else {
+//            gender = Gender.OTHER;
+//        }
+//        String address = addressArea.getText().trim();
+//        if (email.isEmpty() || mobile.isEmpty() || address.isEmpty()) {
+//            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please fill in all fields.");
+//            return;
+//        }
+//        try {
+//            Member member = new Member(name, email, mobile, gender, address);
+//            MemberManagementService service = new MemberManagementService();
+//             boolean success=service.updateMember(memberId, member);
+//             if(success)
+//             {
+//            showAlert(Alert.AlertType.INFORMATION, "Success", "Member updated successfully!");
+//            clearForm();
+//            closeWindow();
+//             }
+//             else
+//             {
+//            	 showAlert(Alert.AlertType.ERROR, "Update Failed", "Member update failed. Please try again.");
+//             }
+//        } catch (IllegalArgumentException ex) {
+//            showAlert(Alert.AlertType.ERROR, "Invalid Input", ex.getMessage());
+//        } catch (Exception ex) {
+//            showAlert(Alert.AlertType.ERROR, "Error", "Unexpected error: " + ex.getMessage());
+//            ex.printStackTrace();
+//        }
+//        }
     @FXML
     private void handleBack(ActionEvent event) throws IOException {
     	Parent root = FXMLLoader.load(getClass().getResource("/resources/MemberManagement.fxml"));

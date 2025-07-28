@@ -37,7 +37,7 @@ public class MemberManagementDao implements MemberManagementDaoInterface{
 	            }
 	    }
 	} 
-	 public boolean updatermemberDetails(int memberId, Member m) throws Exception {
+	 /*public boolean updatermemberDetails(int memberId, Member m) throws Exception {
 			    String fetchSql = "SELECT * FROM members WHERE MemberId = ?";
 			    String logSql = "INSERT INTO members_log (MemberId, Name, Email, Mobile, Gender, Address, Operation, OperationDate) VALUES (?, ?, ?, ?, ?, ?, 'UPDATE',CURRENT_TIMESTAMP)";
 			    String updateSql = "UPDATE members SET Name = ?, Email = ?, Mobile = ?, Address = ? WHERE MemberId = ?";
@@ -78,6 +78,76 @@ public class MemberManagementDao implements MemberManagementDaoInterface{
 			    }
 			    return false;
 			}
+			*/
+	public boolean updatermemberDetails(int memberId, Member m) throws Exception {
+	    String fetchSql = "SELECT * FROM members WHERE MemberId = ?";
+	    String logSql   =
+	      "INSERT INTO members_log " +
+	      "(MemberId, Name, Email, Mobile, Gender, Address, Operation, OperationDate) " +
+	      "VALUES (?, ?, ?, ?, ?, ?, 'UPDATE', CURRENT_TIMESTAMP)";
+	    try (Connection conn = DBUtil.getConnection()) {
+	        conn.setAutoCommit(false);
+	        try (PreparedStatement fetchPs = conn.prepareStatement(fetchSql)) {
+	            fetchPs.setInt(1, memberId);
+	            try (ResultSet rs = fetchPs.executeQuery()) {
+	                if (!rs.next()) {
+	                    System.out.println("No member found with ID: " + memberId);
+	                    conn.rollback();
+	                    return false;
+	                }
+	                try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
+	                    logPs.setInt(1, rs.getInt("MemberId"));
+	                    logPs.setString(2, rs.getString("Name"));
+	                    logPs.setString(3, rs.getString("Email"));
+	                    logPs.setString(4, rs.getString("Mobile"));
+	                    logPs.setString(5, rs.getString("Gender"));
+	                    logPs.setString(6, rs.getString("Address"));
+	                    logPs.executeUpdate();
+	                }
+	            }
+	        }
+	        StringBuilder sql = new StringBuilder("UPDATE members SET ");
+	        List<Object> params = new ArrayList<>();
+
+	        if (m.getName() != null) {
+	            sql.append("Name = ?, ");
+	            params.add(m.getName());
+	        }
+	        if (m.getEmail() != null) {
+	            sql.append("Email = ?, ");
+	            params.add(m.getEmail());
+	        }
+	        if (m.getMobile() != null) {
+	            sql.append("Mobile = ?, ");
+	            params.add(m.getMobile());
+	        }
+	        if (m.getAddress() != null) {
+	            sql.append("Address = ?, ");
+	            params.add(m.getAddress());
+	        }
+	        if (params.isEmpty()) {
+	            System.out.println("No fields provided to update for Member ID: " + memberId);
+	            conn.rollback();
+	            return false;
+	        }
+	        sql.setLength(sql.length() - 2);
+	        sql.append(" WHERE MemberId = ?");
+	        params.add(memberId);
+	        try (PreparedStatement updatePs = conn.prepareStatement(sql.toString())) {
+	            for (int i = 0; i < params.size(); i++) {
+	                updatePs.setObject(i + 1, params.get(i));
+	            }
+	            int updated = updatePs.executeUpdate();
+	            if (updated > 0) {
+	                conn.commit();
+	                System.out.println("Member details updated successfully for Member ID: " + memberId);
+	                return true;
+	            }
+	        }
+	        conn.commit();
+	    }
+	    return false;
+     }
 	 public List<Member> viewAllMembers() throws Exception {
 			List<Member> members = new ArrayList<>();
 			String query = "SELECT * FROM members";

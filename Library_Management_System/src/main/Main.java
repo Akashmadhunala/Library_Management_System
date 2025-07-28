@@ -1,7 +1,4 @@
-//import controller.ConController;
-//import controller.MainController;
-//import dao.bookDao;
-//import service.BookService;
+
 package main;
 
 import javafx.application.Application;
@@ -20,12 +17,6 @@ public class Main extends Application {
 	    }
 
 	 public static void main(String[] args) {
-		//ConController bc=new ConController(new bookService(new bookDao()));
-		//bc.addBook();
-		//bc.updateBookDetails();
-		//bc.updateBookAvailability();
-		//bc.viewAllBooks();
-		//MainController mn=new MainController();
 		launch(args);
 		
 	}

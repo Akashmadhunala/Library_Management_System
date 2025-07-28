@@ -25,7 +25,8 @@ public class IssueController {
     private IssueService issueRecordService;
     public void setConnection(Connection connection) {
         this.issueRecordService = new IssueService(connection);
-    }    @FXML
+    }    
+    @FXML
     private void handleIssueBook() {
         try {
             int bookId = Integer.parseInt(txtBookId.getText().trim());

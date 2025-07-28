@@ -43,7 +43,7 @@ public class ViewMembersController {
             e.printStackTrace();
         }
     }
-@FXML
+    @FXML
     private void handleBack(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/resources/MemberManagement.fxml"));

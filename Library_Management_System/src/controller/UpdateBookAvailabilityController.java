@@ -30,7 +30,8 @@ public class UpdateBookAvailabilityController {
             int id;
             try {
                 id = Integer.parseInt(str_id.trim());
-            } catch (NumberFormatException e) {
+            } 
+            catch (NumberFormatException e) {
                 showAlert("Error", "Book ID must be a valid number.");
                 return;
             }

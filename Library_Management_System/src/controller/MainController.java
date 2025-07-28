@@ -19,16 +19,16 @@ public class MainController {
     private void handleMemberManagement(ActionEvent event) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/resources/MemberManagement.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));}
+        stage.setScene(new Scene(root));
+    }
     @FXML
     private void handleIssueBook(ActionEvent event) throws Exception {
     	Connection conn=DBUtil.getConnection();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/IssueReturn.fxml"));
         Parent root = loader.load();
 
-        // Inject the DB connection (replace with your actual connection variable)
         IssueController controller = loader.getController();
-        controller.setConnection(conn); // <-- make sure you have this
+        controller.setConnection(conn); 
 
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));

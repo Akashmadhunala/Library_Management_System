@@ -34,9 +34,8 @@ public class ReportDAO {
 	                ir.setReturnDate(returnDate.toLocalDate());
 	            } else {
 	                LocalDate issueDate = rs.getDate("IssueDate").toLocalDate();
-	                ir.setReturnDate(issueDate.plusDays(15)); // Estimated due date
+	                ir.setReturnDate(issueDate.plusDays(15)); 
 	            }
-
 	            list.add(ir);
 	        }
 	    } catch (Exception e) {

@@ -32,7 +32,6 @@ public class OverdueBooksController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
         colMember.setCellValueFactory(new PropertyValueFactory<>("memberName"));
 
-        // Format LocalDate to string
         colReturnDate.setCellValueFactory(cellData -> {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             return new SimpleStringProperty(

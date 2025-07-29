@@ -1,6 +1,6 @@
 package domain;
-public enum AvailabilityStatus {
-    A,
-    I
-}
 
+public enum AvailabilityStatus {
+    AVAILABLE,
+    ISSUED
+}

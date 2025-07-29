@@ -1,14 +1,16 @@
 package controller;
 
-import dao.bookDao;
+import dao.BookDao;
 import domain.AvailabilityStatus;
 import domain.Book;
 import exceptions.DatabaseException;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.BookService;
@@ -16,37 +18,38 @@ import service.BookService;
 public class UpdateBookAvailabilityController {
 
     @FXML private TextField idField;
-    @FXML private TextField availabilityField;
+    @FXML private ComboBox<AvailabilityStatus> availabilityCombo;
 
-    private final BookService bookService = new BookService(new bookDao());
-    private int bookId; 
+    private final BookService bookService = new BookService(new BookDao());
+    private int bookId;
+
+    @FXML
+    public void initialize() {
+        availabilityCombo.setItems(FXCollections.observableArrayList(AvailabilityStatus.values()));
+    }
 
     public void setBookData(Book book) {
         this.bookId = book.getBookId();
         idField.setText(String.valueOf(book.getBookId()));
-        idField.setEditable(false); 
-        availabilityField.setText(book.getAvailability().name());
+        idField.setEditable(false);
+        availabilityCombo.setValue(book.getAvailability());
     }
 
     @FXML
     private void handleUpdateBook() {
         try {
-            String availText = availabilityField.getText();
-            if (availText == null || availText.trim().isEmpty()) {
-                showAlert("Error", "Please enter availability (A or I).");
-                return;
-            }
-
-            AvailabilityStatus availability;
-            try {
-                availability = AvailabilityStatus.valueOf(availText.trim().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                showAlert("Error", "Invalid availability status. Use only A or I.");
-                return;
+            if (bookId == 0 && !idField.getText().trim().isEmpty()) {
+                bookId = Integer.parseInt(idField.getText().trim());
             }
 
             if (!bookService.bookExists(bookId)) {
-                showAlert("Book Not Found", "No book found with ID: " + bookId);
+                showAlert("Error", "No book found with ID: " + bookId);
+                return;
+            }
+
+            AvailabilityStatus availability = availabilityCombo.getValue();
+            if (availability == null) {
+                showAlert("Error", "Please select availability.");
                 return;
             }
 
@@ -54,13 +57,8 @@ public class UpdateBookAvailabilityController {
 
             showAlert("Success", "Book availability updated successfully.");
             handleBack();
-
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "An error occurred while updating.");
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Unexpected error: " + e.getMessage());
+            showAlert("Error", e.getMessage());
         }
     }
 

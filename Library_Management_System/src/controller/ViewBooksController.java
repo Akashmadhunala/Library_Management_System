@@ -1,6 +1,6 @@
 package controller;
 
-import dao.bookDao;
+import dao.BookDao;
 import domain.Book;
 import exceptions.DatabaseException;
 import javafx.collections.FXCollections;
@@ -31,7 +31,7 @@ public class ViewBooksController {
     @FXML private TableColumn<Book, Void> updateCol;
     @FXML private TableColumn<Book, Void> updateAvailCol;
 
-    private final BookService bookService = new BookService(new bookDao());
+    private final BookService bookService = new BookService(new BookDao());
 
     @FXML
     public void initialize() {
@@ -121,10 +121,8 @@ public class ViewBooksController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/UpdateAvailability.fxml"));
             Parent root = loader.load();
-
             UpdateBookAvailabilityController controller = loader.getController();
             controller.setBookData(book);
-
             Stage stage = (Stage) tableView.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (Exception e) {

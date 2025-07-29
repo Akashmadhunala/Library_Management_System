@@ -1,76 +1,78 @@
 package controller;
 
-import dao.bookDao;
+import dao.BookDao;
 import domain.Book;
 import domain.BookStatus;
 import exceptions.DatabaseException;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.BookService;
 
 public class UpdateBookController {
 
+    @FXML private TextField idField;
     @FXML private TextField titleField;
     @FXML private TextField authorField;
     @FXML private TextField categoryField;
-    @FXML private TextField statusField;
+    @FXML private ComboBox<BookStatus> statusCombo;
 
-    private final BookService bookService = new BookService(new bookDao());
+    private final BookService bookService = new BookService(new BookDao());
     private int bookId;
+
+    @FXML
+    public void initialize() {
+        statusCombo.setItems(FXCollections.observableArrayList(BookStatus.values()));
+    }
 
     public void setBookData(Book book) {
         this.bookId = book.getBookId();
+        idField.setText(String.valueOf(book.getBookId()));
+        idField.setEditable(false);
         titleField.setText(book.getTitle());
         authorField.setText(book.getAuthor());
         categoryField.setText(book.getCategory());
-        statusField.setText(book.getStatus().name());
+        statusCombo.setValue(book.getStatus());
     }
 
     @FXML
     private void handleUpdateBook() {
         try {
-            String title = titleField.getText();
-            String author = authorField.getText();
-            String category = categoryField.getText();
-            String stat = statusField.getText();
-
-            BookStatus status = null;
-            if (stat != null && !stat.trim().isEmpty()) {
-                try {
-                    status = BookStatus.valueOf(stat.trim().toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    showAlert("Validation Error", "Invalid status entered.");
-                    return;
-                }
+            if (bookId == 0 && !idField.getText().trim().isEmpty()) {
+                bookId = Integer.parseInt(idField.getText().trim());
             }
 
-            bookService.updateBookDetails(bookId,
-                    title != null && !title.trim().isEmpty() ? title.trim() : null,
-                    author != null && !author.trim().isEmpty() ? author.trim() : null,
-                    category != null && !category.trim().isEmpty() ? category.trim() : null,
-                    status);
+            if (!bookService.bookExists(bookId)) {
+                showAlert("Error", "No book found with ID: " + bookId);
+                return;
+            }
+
+            Book updatedBook = new Book();
+            updatedBook.setBookId(bookId);
+            updatedBook.setTitle(titleField.getText().trim().isEmpty() ? null : titleField.getText().trim());
+            updatedBook.setAuthor(authorField.getText().trim().isEmpty() ? null : authorField.getText().trim());
+            updatedBook.setCategory(categoryField.getText().trim().isEmpty() ? null : categoryField.getText().trim());
+            updatedBook.setStatus(statusCombo.getValue());
+
+            bookService.updateBook(updatedBook);
 
             showAlert("Success", "Book updated successfully.");
             handleBack();
-
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-            showAlert("Database Error", "Failed to update book.");
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Unexpected error occurred.");
+            showAlert("Error", e.getMessage());
         }
     }
 
     @FXML
     private void handleBack() throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/resources/ViewBooks.fxml"));
-        Stage stage = (Stage) titleField.getScene().getWindow();
+        Stage stage = (Stage) idField.getScene().getWindow();
         stage.setScene(new Scene(root));
     }
 

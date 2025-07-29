@@ -1,39 +1,46 @@
 package service;
 
+import dao.BookDao;
+import domain.Book;
+import domain.AvailabilityStatus;
+import exceptions.DatabaseException;
+import util.ValidationUtil;
+
 import java.util.List;
 
-import dao.bookDao;
-import domain.Book;
-import domain.BookStatus;
-import exceptions.DatabaseException;
-import domain.AvailabilityStatus;
-
 public class BookService {
-	bookDao bd;
-	
-	public BookService(bookDao bd) {
-		this.bd = bd;
-	}
-	public void addBook(Book book) throws DatabaseException {
-		//validations
-		bd.addBook(book);
-	}
-	public void updateBookDetails(int id, String title, String author, String category, BookStatus status) throws DatabaseException  {	
-		//validations
-		bd.updateBookDetails(id,title,author,category,status);
-		
-	}
-	public void updateBookAvailability(int id, AvailabilityStatus status) throws DatabaseException {
-		//2 are mandatory
-		bd.updateBookAvailability(id,status);
-		
-	}
-	public  List<Book> getAllBooks() throws DatabaseException {
-		return bd.getAllBooks();
-	}
-	public boolean bookExists(int id) throws DatabaseException {
-	    return bd.bookExists(id);
-	}
+    private final BookDao bookDao;
 
+    public BookService(BookDao bookDao) {
+        this.bookDao = bookDao;
+    }
 
+    public void addBook(Book book) throws DatabaseException {
+        ValidationUtil.validateBookTitle(book.getTitle());
+        ValidationUtil.validateNotEmpty("Author", book.getAuthor());
+        ValidationUtil.validateNotEmpty("Category", book.getCategory());
+        bookDao.addBook(book);
+    }
+
+    public void updateBook(Book book) throws DatabaseException {
+        if (!bookDao.bookExists(book.getBookId())) {
+            throw new DatabaseException("Book does not exist with ID: " + book.getBookId());
+        }
+        bookDao.updateBook(book);
+    }
+
+    public void updateBookAvailability(int id, AvailabilityStatus status) throws DatabaseException {
+        if (!bookDao.bookExists(id)) {
+            throw new DatabaseException("Book does not exist with ID: " + id);
+        }
+        bookDao.updateBookAvailability(id, status);
+    }
+
+    public List<Book> getAllBooks() throws DatabaseException {
+        return bookDao.getAllBooks();
+    }
+
+    public boolean bookExists(int id) throws DatabaseException {
+        return bookDao.bookExists(id);
+    }
 }

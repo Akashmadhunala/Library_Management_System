@@ -1,15 +1,17 @@
 package controller;
 
-
-import dao.bookDao;
-import domain.AvailabilityStatus;
+import dao.BookDao;
 import domain.Book;
 import domain.BookStatus;
+import domain.AvailabilityStatus;
+import exceptions.DatabaseException;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.BookService;
@@ -19,31 +21,40 @@ public class AddBookController {
     @FXML private TextField titleField;
     @FXML private TextField authorField;
     @FXML private TextField categoryField;
-    @FXML private TextField statusField;
-    @FXML private TextField availabilityField;
+    @FXML private ComboBox<BookStatus> statusCombo;
+    @FXML private ComboBox<AvailabilityStatus> availabilityCombo;
 
-    private final BookService bookService = new BookService(new bookDao());
+    private final BookService bookService = new BookService(new BookDao());
+
+    @FXML
+    public void initialize() {
+        statusCombo.setItems(FXCollections.observableArrayList(BookStatus.values()));
+        availabilityCombo.setItems(FXCollections.observableArrayList(AvailabilityStatus.values()));
+    }
 
     @FXML
     private void handleAddBook() {
         try {
-            String title = titleField.getText();
-            String author = authorField.getText();
-            String category = categoryField.getText();
-            String stat = statusField.getText();
-            BookStatus status=BookStatus.valueOf(stat);
-            String avail = availabilityField.getText();
-            AvailabilityStatus availability = AvailabilityStatus.valueOf(avail); 
+            String title = titleField.getText().trim();
+            String author = authorField.getText().trim();
+            String category = categoryField.getText().trim();
+            BookStatus status = statusCombo.getValue();
+            AvailabilityStatus availability = availabilityCombo.getValue();
+
             if (title.isEmpty() || author.isEmpty() || category.isEmpty() || status == null || availability == null) {
                 showAlert("Error", "Please fill all fields.");
                 return;
             }
+
             Book book = new Book(title, author, category, status, availability);
             bookService.addBook(book);
+
             showAlert("Success", "Book added successfully.");
             clearFields();
-        } catch (Exception e) {
+        } catch (DatabaseException e) {
             showAlert("Database Error", e.getMessage());
+        } catch (Exception e) {
+            showAlert("Error", "Unexpected error: " + e.getMessage());
         }
     }
 
@@ -65,8 +76,7 @@ public class AddBookController {
         titleField.clear();
         authorField.clear();
         categoryField.clear();
-        statusField.clear();
-        availabilityField.clear();
+        statusCombo.getSelectionModel().clearSelection();
+        availabilityCombo.getSelectionModel().clearSelection();
     }
 }
-

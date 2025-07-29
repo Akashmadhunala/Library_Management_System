@@ -3,7 +3,7 @@ package controller;
 import dao.BookDao;
 import domain.Book;
 import domain.BookStatus;
-import exceptions.DatabaseException;
+import domain.Category;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,15 +20,17 @@ public class UpdateBookController {
     @FXML private TextField idField;
     @FXML private TextField titleField;
     @FXML private TextField authorField;
-    @FXML private TextField categoryField;
+    @FXML private ComboBox<Category> categoryCombo;
     @FXML private ComboBox<BookStatus> statusCombo;
 
     private final BookService bookService = new BookService(new BookDao());
     private int bookId;
+    Book book=new Book();
 
     @FXML
     public void initialize() {
         statusCombo.setItems(FXCollections.observableArrayList(BookStatus.values()));
+        categoryCombo.setItems(FXCollections.observableArrayList(Category.values()));
     }
 
     public void setBookData(Book book) {
@@ -37,7 +39,7 @@ public class UpdateBookController {
         idField.setEditable(false);
         titleField.setText(book.getTitle());
         authorField.setText(book.getAuthor());
-        categoryField.setText(book.getCategory());
+        categoryCombo.setValue(book.getCategory());
         statusCombo.setValue(book.getStatus());
     }
 
@@ -47,8 +49,8 @@ public class UpdateBookController {
             if (bookId == 0 && !idField.getText().trim().isEmpty()) {
                 bookId = Integer.parseInt(idField.getText().trim());
             }
-
-            if (!bookService.bookExists(bookId)) {
+            book.setBookId(bookId);
+            if (!bookService.bookExists(book)) {
                 showAlert("Error", "No book found with ID: " + bookId);
                 return;
             }
@@ -57,7 +59,7 @@ public class UpdateBookController {
             updatedBook.setBookId(bookId);
             updatedBook.setTitle(titleField.getText().trim().isEmpty() ? null : titleField.getText().trim());
             updatedBook.setAuthor(authorField.getText().trim().isEmpty() ? null : authorField.getText().trim());
-            updatedBook.setCategory(categoryField.getText().trim().isEmpty() ? null : categoryField.getText().trim());
+            updatedBook.setCategory(categoryCombo.getValue());
             updatedBook.setStatus(statusCombo.getValue());
 
             bookService.updateBook(updatedBook);

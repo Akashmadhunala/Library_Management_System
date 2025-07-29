@@ -2,15 +2,14 @@ package dao;
 
 import domain.IssueRecord;
 import domain.Member;
+import exceptions.ManagementException;
 import util.DBUtil;
-import javafx.util.Pair;
-
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
-public class ReportDAO {
+public class ReportDAO implements ReportDaoInterface{
 
 	public List<IssueRecord> getOverdueBooks() {
 	    List<IssueRecord> list = new ArrayList<>();
@@ -45,9 +44,10 @@ public class ReportDAO {
 	}
 
 
-    public List<Pair<String, Long>> getBooksCountPerCategory() {
+	public Map<String, Long> getBooksCountPerCategory() throws ManagementException {
         Map<String, Long> countMap = new LinkedHashMap<>();
         String sql = "SELECT Category, COUNT(*) AS Count FROM books GROUP BY Category";
+
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -55,12 +55,12 @@ public class ReportDAO {
                 countMap.put(rs.getString("Category"), rs.getLong("Count"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ManagementException("Error fetching books per category", e);
         }
-        List<Pair<String, Long>> list = new ArrayList<>();
-        countMap.forEach((k, v) -> list.add(new Pair<>(k, v)));
-        return list;
+
+        return countMap;
     }
+
 
     public List<Member> getMembersWithActiveIssuedBooks() {
         List<Member> list = new ArrayList<>();

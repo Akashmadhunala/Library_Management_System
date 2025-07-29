@@ -1,5 +1,8 @@
 package controller;
 
+import exceptions.ManagementException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,22 +13,51 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import service.ReportService;
-import javafx.util.Pair;
+
+import java.util.Map;
 
 public class BooksPerCategoryController {
 
-    @FXML private TableView<Pair<String, Long>> categoryTable;
-    @FXML private TableColumn<Pair<String, Long>, String> colCategory;
-    @FXML private TableColumn<Pair<String, Long>, Long> colCount;
+    public static class CategoryCount {
+        private final String category;
+        private final Long count;
+
+        public CategoryCount(String category, Long count) {
+            this.category = category;
+            this.count = count;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public Long getCount() {
+            return count;
+        }
+    }
+
+    @FXML private TableView<CategoryCount> categoryTable;
+    @FXML private TableColumn<CategoryCount, String> colCategory;
+    @FXML private TableColumn<CategoryCount, Long> colCount;
 
     private ReportService reportService = new ReportService();
 
+    @FXML
     public void initialize() {
-        colCategory.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getKey()));
-        colCount.setCellValueFactory(data -> new javafx.beans.property.SimpleLongProperty(data.getValue().getValue()).asObject());
+        colCategory.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getCategory()));
+        colCount.setCellValueFactory(data -> new javafx.beans.property.SimpleLongProperty(data.getValue().getCount()).asObject());
 
-        categoryTable.getItems().setAll(reportService.getBooksCountPerCategory());
+        try {
+            Map<String, Long> countMap = reportService.getBooksCountPerCategory();
+            ObservableList<CategoryCount> data = FXCollections.observableArrayList();
+
+            countMap.forEach((category, count) -> data.add(new CategoryCount(category, count)));
+            categoryTable.setItems(data);
+        } catch (ManagementException e) {
+            e.printStackTrace();
+        }
     }
+
     @FXML
     private void handleBack(ActionEvent event) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/resources/RecordOperations.fxml"));
@@ -33,6 +65,7 @@ public class BooksPerCategoryController {
         stage.setScene(new Scene(root));
         stage.show();
     }
+
     @FXML
     private void handleGoHome(ActionEvent event) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/resources/Main.fxml"));

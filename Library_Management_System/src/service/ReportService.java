@@ -2,11 +2,12 @@ package service;
 import dao.ReportDAO;
 import domain.IssueRecord;
 import domain.Member;
-import javafx.util.Pair;
+import exceptions.ManagementException;
 
 import java.util.List;
+import java.util.Map;
 
-public class ReportService {
+public class ReportService implements ReportServiceInterface {
 
     private ReportDAO dao = new ReportDAO();
 
@@ -14,7 +15,7 @@ public class ReportService {
         return dao.getOverdueBooks();
     }
 
-    public List<Pair<String, Long>> getBooksCountPerCategory() {
+    public Map<String, Long> getBooksCountPerCategory() throws ManagementException {
         return dao.getBooksCountPerCategory();
     }
 

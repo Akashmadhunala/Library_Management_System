@@ -2,7 +2,7 @@ package controller;
 
 import dao.BookDao;
 import domain.Book;
-import exceptions.DatabaseException;
+import exceptions.ManagementException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,7 +49,7 @@ public class ViewBooksController {
             List<Book> books = bookService.getAllBooks();
             ObservableList<Book> bookList = FXCollections.observableArrayList(books);
             tableView.setItems(bookList);
-        } catch (DatabaseException e) {
+        } catch (ManagementException e) {
             e.printStackTrace();
         }
     }
@@ -67,7 +67,6 @@ public class ViewBooksController {
                             openUpdateForm(book);
                         });
                     }
-
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
@@ -92,7 +91,6 @@ public class ViewBooksController {
                             openUpdateAvailabilityForm(book);
                         });
                     }
-
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);

@@ -23,7 +23,7 @@
       <TextField fx:id="authorField" layoutX="300.0" layoutY="155.0"/>
 
       <Label layoutX="150.0" layoutY="200.0" text="Category"/>
-      <TextField fx:id="categoryField" layoutX="300.0" layoutY="195.0"/>
+      <ComboBox fx:id="categoryCombo" layoutX="300.0" layoutY="195.0" prefWidth="150.0"/>
 
       <Label layoutX="150.0" layoutY="240.0" text="Status"/>
       <ComboBox fx:id="statusCombo" layoutX="300.0" layoutY="235.0" prefWidth="150.0"/>

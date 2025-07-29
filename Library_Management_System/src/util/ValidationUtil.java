@@ -1,21 +1,21 @@
 package util;
 
-import exceptions.DatabaseException;
+import exceptions.ManagementException;
 
 public class ValidationUtil {
 
-    public static void validateBookTitle(String title) throws DatabaseException {
-        if (title == null || title.trim().isEmpty()) {
-            throw new DatabaseException("Book title cannot be empty.");
+    public static void validateBookTitle(String title) throws ManagementException {
+        if(title == null || title.trim().isEmpty()){
+            throw new ManagementException("Book title cannot be empty.");
         }
-        if (title.length() > 35) {
-            throw new DatabaseException("Book title cannot exceed 35 characters.");
+        if(title.length() > 35){
+            throw new ManagementException("Book title cannot exceed 35 characters.");
         }
     }
 
-    public static void validateNotEmpty(String field, String value) throws DatabaseException {
+    public static void validateNotEmpty(String field, String value) throws ManagementException{
         if (value == null || value.trim().isEmpty()) {
-            throw new DatabaseException(field + " cannot be empty.");
+            throw new ManagementException(field + " cannot be empty.");
         }
     }
 }

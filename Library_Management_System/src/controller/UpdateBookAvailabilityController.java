@@ -3,7 +3,7 @@ package controller;
 import dao.BookDao;
 import domain.AvailabilityStatus;
 import domain.Book;
-import exceptions.DatabaseException;
+import exceptions.ManagementException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +21,7 @@ public class UpdateBookAvailabilityController {
     @FXML private ComboBox<AvailabilityStatus> availabilityCombo;
 
     private final BookService bookService = new BookService(new BookDao());
+    Book book = new Book();
     private int bookId;
 
     @FXML
@@ -41,8 +42,8 @@ public class UpdateBookAvailabilityController {
             if (bookId == 0 && !idField.getText().trim().isEmpty()) {
                 bookId = Integer.parseInt(idField.getText().trim());
             }
-
-            if (!bookService.bookExists(bookId)) {
+            book.setBookId(bookId);
+            if (!bookService.bookExists(book)) {
                 showAlert("Error", "No book found with ID: " + bookId);
                 return;
             }

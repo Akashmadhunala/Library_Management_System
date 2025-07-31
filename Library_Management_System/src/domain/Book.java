@@ -8,7 +8,7 @@ public class Book {
     private String title;
     private String author;
     private Category category;
-    private BookStatus status;
+    private Status status;
     private AvailabilityStatus availability;
     private String addedBy;
     private LocalDateTime OperationDate;
@@ -31,24 +31,7 @@ public class Book {
 
 	public Book() {}
 
-    public Book(int bookId, String title, String author, Category category, BookStatus status, AvailabilityStatus availability, LocalDateTime dateAdded) {
-        this.bookId = bookId;
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.status = status;
-        this.availability = availability;
-        this.OperationDate = dateAdded;
-    }
-
-    public Book(String title, String author, Category category, BookStatus status, AvailabilityStatus availability) {
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.status = status;
-        this.availability = availability;
-        this.OperationDate = LocalDateTime.now();
-    }
+    
 
     public int getBookId() { return bookId; }
     public void setBookId(int bookId) { this.bookId = bookId; }
@@ -59,8 +42,8 @@ public class Book {
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }
 
-    public BookStatus getStatus() { return status; }
-    public void setStatus(BookStatus status) { this.status = status; }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
     public AvailabilityStatus getAvailability() { return availability; }
     public void setAvailability(AvailabilityStatus availability) { this.availability = availability; }

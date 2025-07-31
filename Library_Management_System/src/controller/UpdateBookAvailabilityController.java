@@ -3,7 +3,6 @@ package controller;
 import dao.BookDao;
 import domain.AvailabilityStatus;
 import domain.Book;
-import exceptions.ManagementException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,13 +13,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.BookService;
+import service.BookServiceInterface;
 
 public class UpdateBookAvailabilityController {
 
     @FXML private TextField idField;
     @FXML private ComboBox<AvailabilityStatus> availabilityCombo;
 
-    private final BookService bookService = new BookService(new BookDao());
+    private final BookServiceInterface bookService = new BookService(new BookDao());
     Book book = new Book();
     private int bookId;
 
@@ -45,6 +45,7 @@ public class UpdateBookAvailabilityController {
             book.setBookId(bookId);
             if (!bookService.bookExists(book)) {
                 showAlert("Error", "No book found with ID: " + bookId);
+                handleBack();
                 return;
             }
 
@@ -53,10 +54,13 @@ public class UpdateBookAvailabilityController {
                 showAlert("Error", "Please select availability.");
                 return;
             }
-
-            bookService.updateBookAvailability(bookId, availability);
+            Book book=new Book();
+            book.setBookId(bookId);
+            book.setAvailability(availability);
+            bookService.updateBookAvailability(book);
 
             showAlert("Success", "Book availability updated successfully.");
+            clearFields();
             handleBack();
         } catch (Exception e) {
             showAlert("Error", e.getMessage());
@@ -76,5 +80,9 @@ public class UpdateBookAvailabilityController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    private void clearFields() {
+        idField.clear();
+        availabilityCombo.getSelectionModel().clearSelection();
     }
 }

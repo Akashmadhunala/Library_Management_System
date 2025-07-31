@@ -1,6 +1,6 @@
 package domain;
 
-public enum BookStatus {
+public enum Status {
     ACTIVE,
     INACTIVE
 }

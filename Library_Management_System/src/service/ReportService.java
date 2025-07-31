@@ -1,5 +1,6 @@
 package service;
-import dao.ReportDAO;
+import dao.ReportDao;
+import dao.ReportDaoInterface;
 import domain.IssueRecord;
 import domain.Member;
 import exceptions.ManagementException;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class ReportService implements ReportServiceInterface {
 
-    private ReportDAO dao = new ReportDAO();
+    private ReportDaoInterface dao = new ReportDao();
 
     public List<IssueRecord> getOverdueBooks() {
         return dao.getOverdueBooks();

@@ -1,50 +1,56 @@
 package service;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import dao.IssueRecordDao;
+import dao.MemberManagementDao;
+import dao.BookDao;
+import domain.Book;
 import domain.IssueRecord;
 
 public class IssueService {
-    private IssueRecordDao issueRecordDAO;
+    private final IssueRecordDao issueRecordDAO;
+    private final MemberManagementDao memberDAO;
+    private final BookDao bookDAO;
 
-    public IssueService(Connection conn) {
-        this.issueRecordDAO = new IssueRecordDao(conn);
+    public IssueService(Connection connection) {
+        this.issueRecordDAO = new IssueRecordDao(connection);
+        this.memberDAO = new MemberManagementDao(); 
+        this.bookDAO = new BookDao();               
     }
-    public String issueBookToMember(int bookId, int memberId) {
+
+    public String issueBookToMember(int bookId, int memberId, String issuedBy) {
         try {
-            return issueRecordDAO.issueBook(bookId, memberId);
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-            return "Error while issuing the book: " + e.getMessage();
+        	Book book = new Book();
+        	book.setBookId(bookId);
+            if (!bookDAO.bookExists(book)) {
+                return "Error: Book ID " + bookId + " does not exist.";
+            }
+
+            if (!memberDAO.memberExists(memberId)) {
+                return "Error: Member ID " + memberId + " does not exist.";
+            }
+
+            return issueRecordDAO.issueBook(bookId, memberId, issuedBy);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error while issuing book: " + e.getMessage();
         }
     }
     public String returnBookFromMember(int bookId, int memberId) {
-        try {
-            return issueRecordDAO.returnBook(bookId, memberId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Error while returning the book: " + e.getMessage();
-        }
+        return issueRecordDAO.returnBook(bookId, memberId);
     }
+
     public boolean isBookAlreadyIssued(int bookId) {
-        try {
-            return issueRecordDAO.isBookAlreadyIssued(bookId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false; 
-        }
+        return issueRecordDAO.isBookAlreadyIssued(bookId);
     }
+
     public String canBookBeIssued(int bookId) {
-        try {
-            return issueRecordDAO.canBookBeIssued(bookId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Error checking book status: " + e.getMessage();
-        }
+        return issueRecordDAO.canBookBeIssued(bookId);
     }
+
     public List<IssueRecord> getAllIssueRecords() {
         return issueRecordDAO.getAllIssueRecords();
     }

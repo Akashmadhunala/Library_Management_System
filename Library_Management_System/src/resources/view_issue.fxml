@@ -2,14 +2,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewIssueController">
-    <TableView fx:id="tableView" layoutX="20.0" layoutY="20.0" prefHeight="400.0" prefWidth="600.0">
-        <columns>
-            <TableColumn fx:id="colIssueId" text="Issue ID" prefWidth="100" />
-            <TableColumn fx:id="colBookId" text="Book ID" prefWidth="100" />
-            <TableColumn fx:id="colMemberId" text="Member ID" prefWidth="100" />
-            <TableColumn fx:id="colStatus" text="Status" prefWidth="100" />
-            <TableColumn fx:id="colIssueDate" text="Issue Date" prefWidth="100" />
-            <TableColumn fx:id="colReturnDate" text="Return Date" prefWidth="100" />
-        </columns>
-    </TableView>
+    <TableView fx:id="tableView">
+    <columns>
+        <TableColumn fx:id="colIssueId" text="Issue ID"/>
+        <TableColumn fx:id="colBookId" text="Book ID"/>
+        <TableColumn fx:id="colMemberId" text="Member ID"/>
+        <TableColumn fx:id="colStatus" text="Status"/>
+        <TableColumn fx:id="colIssueDate" text="Issue Date"/>
+        <TableColumn fx:id="colReturnDate" text="Return Date"/>
+        <TableColumn fx:id="colIssuedBy" text="Issued By"/>
+    </columns>
+</TableView>
 </AnchorPane>

@@ -1,167 +1,146 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 import domain.Gender;
 import domain.Member;
+import exceptions.ManagementException;
 import util.DBUtil;
 
-public class MemberManagementDao implements MemberManagementDaoInterface{
-	public boolean registerNewMember(Member m) throws Exception {
-	    String sql = "INSERT INTO members(Name, Email, Mobile, Gender, Address) VALUES (?, ?, ?, ?, ?)";
-	    try (Connection con = DBUtil.getConnection();
-	         PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-	        ps.setString(1, m.getName());
-	        ps.setString(2, m.getEmail());
-	        ps.setString(3, m.getMobile());
-	        ps.setString(4, m.getGender().name());
-	        ps.setString(5, m.getAddress());
-	        int rows = ps.executeUpdate();
-	        if (rows > 0) {
-	            try (ResultSet rs = ps.getGeneratedKeys()) {
-	                if (rs.next()) {
-	                    int generatedId = rs.getInt(1);
-	                    System.out.println("Member added successfully. Member ID: " + generatedId);
-	                } else {
-	                    System.out.println("Member was not added");
-	                }
-	            }
-	            return true;
-	        } else {
-	            return false; 	      
-	            }
-	    }
-	} 
-	 /*public boolean updatermemberDetails(int memberId, Member m) throws Exception {
-			    String fetchSql = "SELECT * FROM members WHERE MemberId = ?";
-			    String logSql = "INSERT INTO members_log (MemberId, Name, Email, Mobile, Gender, Address, Operation, OperationDate) VALUES (?, ?, ?, ?, ?, ?, 'UPDATE',CURRENT_TIMESTAMP)";
-			    String updateSql = "UPDATE members SET Name = ?, Email = ?, Mobile = ?, Address = ? WHERE MemberId = ?";
-			    try (Connection conn = DBUtil.getConnection()) {
-			        conn.setAutoCommit(false);
-			        try (PreparedStatement fetchPs = conn.prepareStatement(fetchSql)) {
-			            fetchPs.setInt(1, memberId);
-			            try (ResultSet rs = fetchPs.executeQuery()) {
-			                if (rs.next()) {
-			                    try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
-			                        logPs.setInt(1, rs.getInt("MemberId"));
-			                        logPs.setString(2, rs.getString("Name"));
-			                        logPs.setString(3, rs.getString("Email"));
-			                        logPs.setString(4, rs.getString("Mobile"));
-			                        logPs.setString(5, rs.getString("Gender"));
-			                        logPs.setString(6, rs.getString("Address"));
-			                        logPs.executeUpdate();
-			                    }
-			                    try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
-			                    	updatePs.setString(1, m.getName());
-			                        updatePs.setString(2, m.getEmail());
-			                        updatePs.setString(3, m.getMobile());
-			                        updatePs.setString(4, m.getAddress());
-			                        updatePs.setInt(5, memberId);
-			                        int updated = updatePs.executeUpdate();
-			                        if (updated > 0) {
-			                        	conn.commit();
-			                            System.out.println("Member Details updated successfully for Member ID: " + memberId);
-			                            return true;
-			                        }
-			                    }
-			                    conn.commit();
-			                } else {
-			                    System.out.println("No member found with ID: " + memberId);
-			                }
-			            }
-			        } 
-			    }
-			    return false;
-			}
-			*/
-	public boolean updatermemberDetails(int memberId, Member m) throws Exception {
-	    String fetchSql = "SELECT * FROM members WHERE MemberId = ?";
-	    String logSql   =
-	      "INSERT INTO members_log " +
-	      "(MemberId, Name, Email, Mobile, Gender, Address, Operation, OperationDate) " +
-	      "VALUES (?, ?, ?, ?, ?, ?, 'UPDATE', CURRENT_TIMESTAMP)";
-	    try (Connection conn = DBUtil.getConnection()) {
-	        conn.setAutoCommit(false);
-	        try (PreparedStatement fetchPs = conn.prepareStatement(fetchSql)) {
-	            fetchPs.setInt(1, memberId);
-	            try (ResultSet rs = fetchPs.executeQuery()) {
-	                if (!rs.next()) {
-	                    System.out.println("No member found with ID: " + memberId);
-	                    conn.rollback();
-	                    return false;
-	                }
-	                try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
-	                    logPs.setInt(1, rs.getInt("MemberId"));
-	                    logPs.setString(2, rs.getString("Name"));
-	                    logPs.setString(3, rs.getString("Email"));
-	                    logPs.setString(4, rs.getString("Mobile"));
-	                    logPs.setString(5, rs.getString("Gender"));
-	                    logPs.setString(6, rs.getString("Address"));
-	                    logPs.executeUpdate();
-	                }
-	            }
-	        }
-	        StringBuilder sql = new StringBuilder("UPDATE members SET ");
-	        List<Object> params = new ArrayList<>();
+public class MemberManagementDao implements MemberManagementDaoInterface {
 
-	        if (m.getName() != null) {
-	            sql.append("Name = ?, ");
-	            params.add(m.getName());
-	        }
-	        if (m.getEmail() != null) {
-	            sql.append("Email = ?, ");
-	            params.add(m.getEmail());
-	        }
-	        if (m.getMobile() != null) {
-	            sql.append("Mobile = ?, ");
-	            params.add(m.getMobile());
-	        }
-	        if (m.getAddress() != null) {
-	            sql.append("Address = ?, ");
-	            params.add(m.getAddress());
-	        }
-	        if (params.isEmpty()) {
-	            System.out.println("No fields provided to update for Member ID: " + memberId);
-	            conn.rollback();
-	            return false;
-	        }
-	        sql.setLength(sql.length() - 2);
-	        sql.append(" WHERE MemberId = ?");
-	        params.add(memberId);
-	        try (PreparedStatement updatePs = conn.prepareStatement(sql.toString())) {
-	            for (int i = 0; i < params.size(); i++) {
-	                updatePs.setObject(i + 1, params.get(i));
-	            }
-	            int updated = updatePs.executeUpdate();
-	            if (updated > 0) {
-	                conn.commit();
-	                System.out.println("Member details updated successfully for Member ID: " + memberId);
-	                return true;
-	            }
-	        }
-	        conn.commit();
-	    }
-	    return false;
-     }
-	 public List<Member> viewAllMembers() throws Exception {
-			List<Member> members = new ArrayList<>();
-			String query = "SELECT * FROM members";
-			try (Connection conn = DBUtil.getConnection(); 
-					PreparedStatement ps = conn.prepareStatement(query)) {
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					Member member = new Member(rs.getInt("memberId"), rs.getString("name"), rs.getString("email"),
-							rs.getString("mobile"), Gender.valueOf(rs.getString("gender")), rs.getString("address"));
-					members.add(member);
+	public boolean registerNewMember(Member m) throws Exception {
+		String sql = "INSERT INTO members(Name, Email, Mobile, Gender, Address, AddedBy) VALUES (?, ?, ?, ?, ?, ?)";
+		try (Connection con = DBUtil.getConnection();
+				PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			int index = 1;
+			ps.setString(index++, m.getName());
+			ps.setString(index++, m.getEmail());
+			ps.setString(index++, m.getMobile());
+			ps.setString(index++, m.getGender().getCode());
+			ps.setString(index++, m.getAddress());
+			ps.setString(index++, m.getAddedBy());
+			int rows = ps.executeUpdate();
+			if (rows > 0) {
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						int generatedId = rs.getInt(1);
+						System.out.println("Member added successfully. Member ID: " + generatedId);
+					}
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+				return true;
 			}
-			return members;
-		}	
+		}
+		return false;
+	}
+
+	public boolean updaterMemberDetails(Member m) throws Exception {
+		String fetchSql = "SELECT MemberId, Name, Email, Mobile, Gender, Address, AddedBy, DateAdded FROM members WHERE MemberId = ?";
+		String logSql = "INSERT INTO members_log (MemberId, Name, Email, Mobile, Gender, Address, AddedBy) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String updateSql = "UPDATE members SET Name = ?, Email = ?, Mobile = ?, Gender = ?, Address = ? WHERE MemberId = ?";
+
+		try (Connection conn = DBUtil.getConnection()) {
+			conn.setAutoCommit(false);
+
+			try (PreparedStatement fetchPs = conn.prepareStatement(fetchSql)) {
+				fetchPs.setInt(1, m.getMemberId());
+
+				try (ResultSet rs = fetchPs.executeQuery()) {
+					if (rs.next()) {
+						try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
+							int count = 1;
+							logPs.setInt(count++, rs.getInt("MemberId"));
+							logPs.setString(count++, rs.getString("Name"));
+							logPs.setString(count++, rs.getString("Email"));
+							logPs.setString(count++, rs.getString("Mobile"));
+							logPs.setString(count++, rs.getString("Gender"));
+							logPs.setString(count++, rs.getString("Address"));
+							logPs.setString(count++, "ADMIN");
+
+							logPs.executeUpdate();
+						}
+
+						try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
+							int count = 1;
+							updatePs.setString(count++, m.getName());
+							updatePs.setString(count++, m.getEmail());
+							updatePs.setString(count++, m.getMobile());
+							updatePs.setString(count++, m.getGender().getCode());
+							updatePs.setString(count++, m.getAddress());
+							updatePs.setInt(count++, m.getMemberId());
+
+							int updated = updatePs.executeUpdate();
+							if (updated > 0) {
+								conn.commit();
+								System.out.println(
+										"Member details updated successfully for Member ID: " + m.getMemberId());
+								return true;
+							}
+						}
+					} else {
+						System.out.println("No member found with ID: " + m.getMemberId());
+					}
+				}
+			} catch (Exception e) {
+				conn.rollback();
+				throw e;
+			}
+		}
+		return false;
+	}
+
+	public List<Member> viewAllMembers() throws Exception {
+		List<Member> members = new ArrayList<>();
+		String query = "SELECT MemberId,Name,Email,Mobile,Gender,Address,AddedBy,DateAdded  FROM members";
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Member member = new Member();
+				member.setId(rs.getInt("memberId"));
+				member.setName(rs.getString("name"));
+				member.setEmail(rs.getString("email"));
+				member.setMobile(rs.getString("mobile"));
+				member.setGender(Gender.fromCode(rs.getString("gender")));
+				member.setAddress(rs.getString("address"));
+				member.setAddedBy(rs.getString("AddedBy"));
+				member.setDateAdded(rs.getTimestamp("DateAdded").toLocalDateTime());
+				members.add(member);
+			}
+		} catch (SQLException e) {
+			throw new ManagementException("Failed to retrieve member list", e);
+		}
+		return members;
+	}
+
+	public boolean isEmailOrMobileDuplicate(String email, String mobile, int currentMemberId) throws Exception {
+		String query = "SELECT COUNT(*) FROM members WHERE (email = ? OR mobile = ?) AND memberId <> ?";
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setString(1, email);
+			stmt.setString(2, mobile);
+			stmt.setInt(3, currentMemberId);
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean memberExists(int memberId) throws Exception {
+		String query = "SELECT 1 FROM members WHERE MemberId = ?";
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, memberId);
+			ResultSet rs = ps.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+
 }

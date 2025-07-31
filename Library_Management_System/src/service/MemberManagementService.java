@@ -1,85 +1,42 @@
 package service;
 
-import java.util.List;
 import dao.MemberManagementDao;
 import domain.Member;
+import util.ValidationUtil;
 
-public class MemberManagementService implements MemberManagementServiceInterface{
-private MemberManagementDao memberDao;
-	public MemberManagementService()
-	{
-		this.memberDao=new MemberManagementDao();
-	}
-	public boolean registerMember(Member member) throws Exception {
-	    try {
-	        return memberDao.registerNewMember(member);
-	    } catch (Exception ex) {
-	    	String message = ex.getMessage().toLowerCase();
-	        if (message.contains("email already exists")) {
-	            throw new IllegalArgumentException("Email already exists. Please use a different email.");
-	        } else if (message.contains("mobile number already exists")) {
-	            throw new IllegalArgumentException("Mobile number already exists. Please use a different number.");
-	        } else if (message.contains("duplicate entry")) {
-	            throw new IllegalArgumentException("Email or Mobile number already exists.");
-	        } else {
-	            throw ex;
-	        }
-	    }
-	}
-	public boolean updateMember(int memberId, Member member) throws Exception {
-	    if (member.getName() == null &&
-	        member.getEmail() == null &&
-	        member.getMobile() == null &&
-	        member.getAddress() == null) {
-	        throw new IllegalArgumentException("At least one field must be provided to update.");
-	    }
-	    if (member.getEmail() != null && !isValidEmail(member.getEmail())) {
-	        throw new IllegalArgumentException("Invalid email format.");
-	    }
-	    if (member.getMobile() != null && !isValidPhoneNumber(member.getMobile())) {
-	        throw new IllegalArgumentException("Mobile number must be exactly 10 digits.");
-	    }
+import java.util.List;
 
-	    try {
-	        return memberDao.updatermemberDetails(memberId, member);
-	    } catch (Exception ex) {
-	        String message = ex.getMessage().toLowerCase();
-	        if (message.contains("email already exists")) {
-	            throw new IllegalArgumentException("Email already exists. Please use a different email.");
-	        } else if (message.contains("mobile number already exists")) {
-	            throw new IllegalArgumentException("Mobile number already exists. Please use a different number.");
-	        } else if (message.contains("duplicate entry")) {
-	            throw new IllegalArgumentException("Email or Mobile number already exists.");
-	        } else {
-	            throw ex;
-	        }
-	    }
-	}
-	/*public boolean updateMember(int memberId, Member member) throws Exception {
-	    try {
-	        return memberDao.updatermemberDetails(memberId, member);
-	    } catch (Exception ex) {
-	        String message = ex.getMessage().toLowerCase();
-	        if (message.contains("email already exists")) {
-	            throw new IllegalArgumentException("Email already exists. Please use a different email.");
-	        } else if (message.contains("mobile number already exists")) {
-	            throw new IllegalArgumentException("Mobile number already exists. Please use a different number.");
-	        } else if (message.contains("duplicate entry")) {
-	            throw new IllegalArgumentException("Email or Mobile number already exists.");
-	        } else {
-	            throw ex;
-	        }
-	    }
-	}*/
-	public List<Member> getAllMembers() throws Exception {
-		return memberDao.viewAllMembers();
-        
-    }	
-	private boolean isValidEmail(String email) {
-	    String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-	    return email != null && email.matches(emailRegex);
-	}
-	private boolean isValidPhoneNumber(String phone) {
-	    return phone != null && phone.matches("\\d{10}");
-	}
+public class MemberManagementService implements MemberManagementServiceInterface {
+    private final MemberManagementDao memberDao;
+
+    public MemberManagementService() {
+        this.memberDao = new MemberManagementDao();
+    }
+    public boolean registerMember(Member member) throws Exception {
+        ValidationUtil.validateNotEmpty("Name", member.getName());
+        ValidationUtil.validateEmail(member.getEmail());
+        ValidationUtil.validatePhone(member.getMobile());
+        ValidationUtil.validateNotEmpty("Address", member.getAddress());
+        if (member.getAddedBy() == null || member.getAddedBy().trim().isEmpty()) {
+        	member.setAddedBy("ADMIN");
+        }
+        if (memberDao.isEmailOrMobileDuplicate(member.getEmail(), member.getMobile(),member.getMemberId())) {
+            return false; 
+        }
+        memberDao.registerNewMember(member);
+        return true;
+    }
+    public boolean updateMember(Member member) throws Exception {
+        if (memberDao.isEmailOrMobileDuplicate(member.getEmail(), member.getMobile(), member.getMemberId())) {
+            return false;
+        }
+        ValidationUtil.validateNotEmpty("Name", member.getName());
+        ValidationUtil.validateEmail(member.getEmail());
+        ValidationUtil.validatePhone(member.getMobile());
+        ValidationUtil.validateNotEmpty("Address", member.getAddress());
+        return memberDao.updaterMemberDetails(member);
+    }
+    public List<Member> getAllMembers() throws Exception {
+        return memberDao.viewAllMembers();
+    }
 }

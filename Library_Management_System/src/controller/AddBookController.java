@@ -2,7 +2,7 @@ package controller;
 
 import dao.BookDao;
 import domain.Book;
-import domain.BookStatus;
+import domain.Status;
 import domain.Category;
 import domain.AvailabilityStatus;
 import exceptions.ManagementException;
@@ -16,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.BookService;
+import service.BookServiceInterface;
 
 public class AddBookController {
 
@@ -23,14 +24,14 @@ public class AddBookController {
     @FXML private TextField authorField;
     @FXML private TextField categoryField;
     @FXML private ComboBox<Category> categoryCombo;
-    @FXML private ComboBox<BookStatus> statusCombo;
+    @FXML private ComboBox<Status> statusCombo;
     @FXML private ComboBox<AvailabilityStatus> availabilityCombo;
 
-    private final BookService bookService = new BookService(new BookDao());
+    private final BookServiceInterface bookService = new BookService(new BookDao());
 
     @FXML
     public void initialize() {
-        statusCombo.setItems(FXCollections.observableArrayList(BookStatus.values()));
+        statusCombo.setItems(FXCollections.observableArrayList(Status.values()));
         availabilityCombo.setItems(FXCollections.observableArrayList(AvailabilityStatus.values()));
         categoryCombo.setItems(FXCollections.observableArrayList(Category.values()));
     }
@@ -41,7 +42,7 @@ public class AddBookController {
             String title = titleField.getText().trim();
             String author = authorField.getText().trim();
             Category category = categoryCombo.getValue();
-            BookStatus status = statusCombo.getValue();
+            Status status = statusCombo.getValue();
             AvailabilityStatus availability = availabilityCombo.getValue();
 
             if (title.isEmpty() || author.isEmpty() || category==null || status == null || availability == null) {

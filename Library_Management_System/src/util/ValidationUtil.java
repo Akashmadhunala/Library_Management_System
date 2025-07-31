@@ -18,4 +18,21 @@ public class ValidationUtil {
             throw new ManagementException(field + " cannot be empty.");
         }
     }
+    public static void validateEmail(String email) throws ManagementException {
+        if (email == null || email.trim().isEmpty()) {
+            throw new ManagementException("Email cannot be empty.");
+        }
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if (!email.matches(emailRegex)) {
+        	 throw new IllegalArgumentException("Invalid email format.");
+        }
+    }
+    public static void validatePhone(String phone) throws ManagementException {
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new ManagementException("Phone number cannot be empty.");
+        }
+        if (!phone.matches("\\d{10}")) {
+            throw new IllegalArgumentException("Phone number must be exactly 10 digits.");
+        }
+        }
 }

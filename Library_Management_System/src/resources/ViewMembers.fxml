@@ -25,6 +25,10 @@
                 <TableColumn fx:id="mobileColumn" text="Mobile" prefWidth="100"/>
                 <TableColumn fx:id="genderColumn" text="Gender" prefWidth="80"/>
                 <TableColumn fx:id="addressColumn" text="Address" prefWidth="160"/>
+                <TableColumn fx:id="addedByColumn" text="Added By" />
+                 <TableColumn fx:id="colDateAdded" text="Date Added" prefWidth="150"/>
+                <TableColumn fx:id="updateColumn" text="Update" prefWidth="100"/>
+             
             </columns>
         </TableView>
     </center>

@@ -13,7 +13,6 @@ public class MemberController {
         loadFXML(event, "/resources/AddMember.fxml");
     }
 
-    
     @FXML
     private void handleUpdateMember(ActionEvent event) throws Exception {
         loadFXML(event, "/resources/UpdateMember.fxml");
@@ -24,7 +23,6 @@ public class MemberController {
         loadFXML(event, "/resources/ViewMembers.fxml");
     }
 
-    
     @FXML
     private void handleBack(ActionEvent event) throws Exception {
         loadFXML(event, "/resources/Main.fxml");

@@ -8,7 +8,9 @@ import domain.Member;
 import exceptions.ManagementException;
 
 public interface ReportDaoInterface {
-	public List<IssueRecord> getOverdueBooks() ;
-	public Map<String, Long> getBooksCountPerCategory() throws ManagementException ;
-	public List<Member> getMembersWithActiveIssuedBooks();	
+	public List<IssueRecord> getOverdueBooks();
+
+	public Map<String, Long> getBooksCountPerCategory() throws ManagementException;
+
+	public List<Member> getMembersWithActiveIssuedBooks();
 }

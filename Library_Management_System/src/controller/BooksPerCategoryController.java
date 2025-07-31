@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import service.ReportService;
+import service.ReportServiceInterface;
 
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class BooksPerCategoryController {
     @FXML private TableColumn<CategoryCount, String> colCategory;
     @FXML private TableColumn<CategoryCount, Long> colCount;
 
-    private ReportService reportService = new ReportService();
+    private ReportServiceInterface reportService = new ReportService();
 
     @FXML
     public void initialize() {

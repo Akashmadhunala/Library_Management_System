@@ -16,6 +16,8 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import service.BookService;
+import service.BookServiceInterface;
+
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class ViewBooksController {
     @FXML private TableColumn<Book, Void> updateCol;
     @FXML private TableColumn<Book, Void> updateAvailCol;
 
-    private final BookService bookService = new BookService(new BookDao());
+    private final BookServiceInterface bookService = new BookService(new BookDao());
 
     @FXML
     public void initialize() {
